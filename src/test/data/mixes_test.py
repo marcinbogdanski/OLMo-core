@@ -5,7 +5,8 @@ from olmo_core.io import file_exists
 
 
 def test_olmoe_mix():
-    from botocore.exceptions import NoCredentialsError
+    from botocore.exceptions import ClientError, NoCredentialsError
+    from olmo_core.exceptions import OLMoNetworkError
 
     paths, labels = DataMix.OLMoE_mix_0824.build("s3://ai2-llm", TokenizerName.dolma2)
     assert len(paths) == len(labels)
@@ -18,10 +19,19 @@ def test_olmoe_mix():
         assert file_exists(paths[-1])
     except NoCredentialsError:
         pytest.skip("Requires AWS credentials")
+    except ClientError as e:
+        if e.response.get("Error", {}).get("Code") in ("403", "AccessDenied"):
+            pytest.skip("Requires access to S3 bucket")
+        raise
+    except OLMoNetworkError as e:
+        if "403" in str(e) or "AccessDenied" in str(e):
+            pytest.skip("Requires access to S3 bucket")
+        raise
 
 
 def test_dolma17_mix():
-    from botocore.exceptions import NoCredentialsError
+    from botocore.exceptions import ClientError, NoCredentialsError
+    from olmo_core.exceptions import OLMoNetworkError
 
     paths, labels = DataMix.dolma17.build("s3://ai2-llm", TokenizerName.gpt_neox_olmo_dolma_v1_5)
     assert len(paths) == len(labels)
@@ -34,10 +44,19 @@ def test_dolma17_mix():
         assert file_exists(paths[-1])
     except NoCredentialsError:
         pytest.skip("Requires AWS credentials")
+    except ClientError as e:
+        if e.response.get("Error", {}).get("Code") in ("403", "AccessDenied"):
+            pytest.skip("Requires access to S3 bucket")
+        raise
+    except OLMoNetworkError as e:
+        if "403" in str(e) or "AccessDenied" in str(e):
+            pytest.skip("Requires access to S3 bucket")
+        raise
 
 
 def test_v3_small_ppl_validation_mix():
-    from botocore.exceptions import NoCredentialsError
+    from botocore.exceptions import ClientError, NoCredentialsError
+    from olmo_core.exceptions import OLMoNetworkError
 
     paths, labels = DataMix.v3_small_ppl_validation.build("s3://ai2-llm", TokenizerName.dolma2)
     assert len(paths) == len(labels)
@@ -51,3 +70,11 @@ def test_v3_small_ppl_validation_mix():
         assert file_exists(paths[-1])
     except NoCredentialsError:
         pytest.skip("Requires AWS credentials")
+    except ClientError as e:
+        if e.response.get("Error", {}).get("Code") in ("403", "AccessDenied"):
+            pytest.skip("Requires access to S3 bucket")
+        raise
+    except OLMoNetworkError as e:
+        if "403" in str(e) or "AccessDenied" in str(e):
+            pytest.skip("Requires access to S3 bucket")
+        raise

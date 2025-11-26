@@ -62,12 +62,21 @@ def test_save_and_load_locally_with_dtensors(backend, tmp_path):
 @pytest.mark.parametrize("backend", BACKENDS)
 @pytest.mark.parametrize("throttle", [True, False])
 def test_save_and_load_remotely_to_s3_with_dtensors(backend, s3_checkpoint_dir, throttle):
-    from botocore.exceptions import NoCredentialsError
+    from botocore.exceptions import ClientError, NoCredentialsError
+    from olmo_core.exceptions import OLMoNetworkError
 
     try:
         dir_is_empty(s3_checkpoint_dir)
     except NoCredentialsError:
         pytest.skip("Requires AWS credentials")
+    except ClientError as e:
+        if e.response.get("Error", {}).get("Code") in ("403", "AccessDenied"):
+            pytest.skip("Requires access to S3 bucket")
+        raise
+    except OLMoNetworkError as e:
+        if "403" in str(e) or "AccessDenied" in str(e):
+            pytest.skip("Requires access to S3 bucket")
+        raise
 
     run_distributed_test(
         run_save_and_load_with_dtensors,

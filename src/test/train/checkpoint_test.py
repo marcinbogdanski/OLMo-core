@@ -49,12 +49,21 @@ def test_checkpointer_with_local_dir(tmp_path, tiny_model_factory):
 
 
 def test_checkpointer_with_remote_s3_dir(s3_checkpoint_dir, tmp_path, tiny_model_factory):
-    from botocore.exceptions import NoCredentialsError
+    from botocore.exceptions import ClientError, NoCredentialsError
+    from olmo_core.exceptions import OLMoNetworkError
 
     try:
         dir_is_empty(s3_checkpoint_dir)
     except NoCredentialsError:
         pytest.skip("Requires AWS credentials")
+    except ClientError as e:
+        if e.response.get("Error", {}).get("Code") in ("403", "AccessDenied"):
+            pytest.skip("Requires access to S3 bucket")
+        raise
+    except OLMoNetworkError as e:
+        if "403" in str(e) or "AccessDenied" in str(e):
+            pytest.skip("Requires access to S3 bucket")
+        raise
 
     run_distributed_test(
         run_checkpointer,
@@ -115,12 +124,21 @@ def test_async_checkpointer_with_local_dir(tmp_path, tiny_model_factory):
 
 
 def test_async_checkpointer_with_remote_s3_dir(s3_checkpoint_dir, tmp_path, tiny_model_factory):
-    from botocore.exceptions import NoCredentialsError
+    from botocore.exceptions import ClientError, NoCredentialsError
+    from olmo_core.exceptions import OLMoNetworkError
 
     try:
         dir_is_empty(s3_checkpoint_dir)
     except NoCredentialsError:
         pytest.skip("Requires AWS credentials")
+    except ClientError as e:
+        if e.response.get("Error", {}).get("Code") in ("403", "AccessDenied"):
+            pytest.skip("Requires access to S3 bucket")
+        raise
+    except OLMoNetworkError as e:
+        if "403" in str(e) or "AccessDenied" in str(e):
+            pytest.skip("Requires access to S3 bucket")
+        raise
 
     run_distributed_test(
         run_async_checkpointer,

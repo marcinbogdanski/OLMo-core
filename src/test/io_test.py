@@ -137,12 +137,21 @@ def _run_remote_functionality(tmp_path, remote_dir):
 
 
 def test_s3_functionality(tmp_path, s3_checkpoint_dir):
-    from botocore.exceptions import NoCredentialsError
+    from botocore.exceptions import ClientError, NoCredentialsError
+    from olmo_core.exceptions import OLMoNetworkError
 
     try:
         _run_remote_functionality(tmp_path, s3_checkpoint_dir)
     except NoCredentialsError:
         pytest.skip("Requires AWS credentials")
+    except ClientError as e:
+        if e.response.get("Error", {}).get("Code") in ("403", "AccessDenied"):
+            pytest.skip("Requires access to S3 bucket")
+        raise
+    except OLMoNetworkError as e:
+        if "403" in str(e) or "AccessDenied" in str(e):
+            pytest.skip("Requires access to S3 bucket")
+        raise
 
 
 def test_gcs_functionality(tmp_path, gcs_checkpoint_dir):
