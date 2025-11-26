@@ -138,6 +138,7 @@ def _run_remote_functionality(tmp_path, remote_dir):
 
 def test_s3_functionality(tmp_path, s3_checkpoint_dir):
     from botocore.exceptions import ClientError, NoCredentialsError
+
     from olmo_core.exceptions import OLMoNetworkError
 
     try:

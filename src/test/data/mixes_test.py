@@ -6,6 +6,7 @@ from olmo_core.io import file_exists
 
 def test_olmoe_mix():
     from botocore.exceptions import ClientError, NoCredentialsError
+
     from olmo_core.exceptions import OLMoNetworkError
 
     paths, labels = DataMix.OLMoE_mix_0824.build("s3://ai2-llm", TokenizerName.dolma2)
@@ -31,6 +32,7 @@ def test_olmoe_mix():
 
 def test_dolma17_mix():
     from botocore.exceptions import ClientError, NoCredentialsError
+
     from olmo_core.exceptions import OLMoNetworkError
 
     paths, labels = DataMix.dolma17.build("s3://ai2-llm", TokenizerName.gpt_neox_olmo_dolma_v1_5)
@@ -56,6 +58,7 @@ def test_dolma17_mix():
 
 def test_v3_small_ppl_validation_mix():
     from botocore.exceptions import ClientError, NoCredentialsError
+
     from olmo_core.exceptions import OLMoNetworkError
 
     paths, labels = DataMix.v3_small_ppl_validation.build("s3://ai2-llm", TokenizerName.dolma2)

@@ -50,6 +50,7 @@ def test_checkpointer_with_local_dir(tmp_path, tiny_model_factory):
 
 def test_checkpointer_with_remote_s3_dir(s3_checkpoint_dir, tmp_path, tiny_model_factory):
     from botocore.exceptions import ClientError, NoCredentialsError
+
     from olmo_core.exceptions import OLMoNetworkError
 
     try:
@@ -125,6 +126,7 @@ def test_async_checkpointer_with_local_dir(tmp_path, tiny_model_factory):
 
 def test_async_checkpointer_with_remote_s3_dir(s3_checkpoint_dir, tmp_path, tiny_model_factory):
     from botocore.exceptions import ClientError, NoCredentialsError
+
     from olmo_core.exceptions import OLMoNetworkError
 
     try:

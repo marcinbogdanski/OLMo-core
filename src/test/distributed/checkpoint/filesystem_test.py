@@ -63,6 +63,7 @@ def test_save_and_load_locally_with_dtensors(backend, tmp_path):
 @pytest.mark.parametrize("throttle", [True, False])
 def test_save_and_load_remotely_to_s3_with_dtensors(backend, s3_checkpoint_dir, throttle):
     from botocore.exceptions import ClientError, NoCredentialsError
+
     from olmo_core.exceptions import OLMoNetworkError
 
     try:

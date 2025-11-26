@@ -31,13 +31,14 @@ def test_lm_head_builder_config():
 
 def _has_liger_kernel() -> bool:
     try:
-        from liger_kernel.ops.fused_linear_cross_entropy import (  # type: ignore
-            LigerFusedLinearCrossEntropyFunction,  # noqa: F401
+        from liger_kernel.ops.fused_linear_cross_entropy import (  # type: ignore; noqa: F401
+            LigerFusedLinearCrossEntropyFunction,
         )
 
         return True
     except ImportError:
         return False
+
 
 @requires_gpu
 @pytest.mark.skipif(not _has_liger_kernel(), reason="Requires liger-kernel")
