@@ -354,6 +354,7 @@ def run_load_checkpoint_with_missing_keys(dir):
         load_model_and_optim_state(dir, ff2)
 
 
+@requires_multi_gpu
 def test_load_checkpoint_with_missing_keys(tmp_path):
     run_distributed_test(
         run_load_checkpoint_with_missing_keys,

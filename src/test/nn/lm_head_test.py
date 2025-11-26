@@ -29,7 +29,18 @@ def test_lm_head_builder_config():
         LMHeadConfig(name=LMHeadType.normalized, bias=True).build(d_model=64, vocab_size=128)
 
 
+def _has_liger_kernel() -> bool:
+    try:
+        from liger_kernel.ops.fused_linear_cross_entropy import (  # type: ignore
+            LigerFusedLinearCrossEntropyFunction,  # noqa: F401
+        )
+
+        return True
+    except ImportError:
+        return False
+
 @requires_gpu
+@pytest.mark.skipif(not _has_liger_kernel(), reason="Requires liger-kernel")
 def test_lm_head_fused_linear_loss(
     d_model: int = 256,
     vocab_size: int = 1024,
